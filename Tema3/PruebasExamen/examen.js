@@ -1,92 +1,97 @@
+function Usuario(nombre, apellido1, apellido2, NIF, edad = 20, mayoria = true, fechaNacimiento = undefined, ...aficiones) {
+    this.nombre = typeof nombre === 'string' ? nombre : '----';
+    this.apellido1 = typeof apellido1 === 'string' ? apellido1 : '----';
+    this.apellido2 = typeof apellido2 === 'string' ? apellido2 : '----';
+    this.NIF = typeof NIF === 'string' ? NIF : '----';
 
-`use strict`
-function Coche(marca, modelo, puertas = 5, potencia = 120, plazas = 5, fecha, ...accesorios) {
-    this.marca = typeof marca === 'string' ? marca : 'no definida';
-    this.modelo = typeof modelo === 'string' ? modelo : 'no definido';
-    this.puertas = typeof puertas === 'number' ? puertas : 3;
-    this.potencia = typeof potencia === 'number' ? potencia : 120;
-    this.plazas = typeof plazas === 'number' ? plazas : 5;
-    this.fecha = Date.parse(fecha) ? new Date(fecha) : new Date().toDateString();
-    this.accesorios = [...new Set(accesorios.map(a => a.toLowerCase()))];
-
-    this.mostrarCoche = function() {
-        return `COCHE: ${this.marca}, ${this.modelo} \nPuertas: ${this.puertas} \nPotencia: ${this.potencia} \nPlazas: ${this.plazas} \nFecha: ${this.fecha} \nAccesorios: \n- ${this.accesorios.join('\n- ')}`;
+    if (typeof edad !== 'number' || isNaN(edad) || edad < 0 || edad > 99) {
+        this.edad = 18;
+    } else {
+        this.edad = edad;
     }
 
-    this.actualizarMarcaModelo = function(marca, modelo) {
-        if (typeof marca === 'string') this.marca = marca;
-        if (typeof modelo === 'string') this.modelo = modelo;
+    this.mayoria = this.edad >= 18 ? true : false;
+
+    if (typeof fechaNacimiento !== 'string' || isNaN(Date.parse(fechaNacimiento))) {
+        this.fechaNacimiento = Date.now();
+    } else {
+        this.fechaNacimiento = Date.parse(fechaNacimiento);
     }
 
-    this.actualizarPuertasPotenciaPlazas = function({puertas, potencia, plazas}) {
-        if (typeof puertas === 'number') this.puertas = puertas;
-        if (typeof potencia === 'number') this.potencia = potencia;
-        if (typeof plazas === 'number') this.plazas = plazas;
-    }
-
-    this.actualizarFecha = function(fecha) {
-        if (Date.parse(fecha)) this.fecha = new Date().toDateString(fecha);
-    }
-
-    this.anyadirAccesorios = function(...accesorios) {
-        this.accesorios = [...new Set([...this.accesorios, ...accesorios.map(a => a.toLowerCase())])];
-    }
-
-    this.borrarAccesorios = function(...accesorios) {
-        accesorios = accesorios.map(a => a.toLowerCase());
-        this.accesorios = this.accesorios.filter(a => !accesorios.includes(a));
-    }
-
-    this.ordenarArrayAccesorios = function() {
-        this.accesorios.sort();
-    }
+    this.aficiones = new Set(aficiones.map(aficion => aficion.toLowerCase()));
 }
 
+Usuario.prototype.mostrarUsuario = function () {
+    console.log(`Nombre: ${this.nombre}`);
+    console.log(`Apellidos: ${this.apellido1} ${this.apellido2}`);
+    console.log(`NIF: ${this.NIF}`);
+    console.log(`Edad: ${this.edad} - ${this.mayoria ? 'es mayor de edad' : 'no es mayor de edad'}`);
+    console.log(`F. Nac.: ${new Date(this.fechaNacimiento).toISOString().slice(0, 10)}`);
+    console.log('Aficiones:');
+    this.aficiones.forEach(aficion => console.log(`- ${aficion}`));
+};
 
+Usuario.prototype.actualizarNombreApellidosNifFnac = function (datos) {
+    if (datos.nombre && typeof datos.nombre === 'string') {
+        this.nombre = datos.nombre;
+    }
+    if (datos.apellido1 && typeof datos.apellido1 === 'string') {
+        this.apellido1 = datos.apellido1;
+    }
+    if (datos.apellido2 && typeof datos.apellido2 === 'string') {
+        this.apellido2 = datos.apellido2;
+    }
+    if (datos.NIF && typeof datos.NIF === 'string') {
+        this.NIF = datos.NIF;
+    }
+    if (datos.fechaNacimiento && typeof datos.fechaNacimiento === 'string' && !isNaN(Date.parse(datos.fechaNacimiento))) {
+        this.fechaNacimiento = Date.parse(datos.fechaNacimiento);
+        const today = new Date();
+        const birthDate = new Date(this.fechaNacimiento);
+        this.edad = today.getFullYear() - birthDate.getFullYear();
+        const diffMonths = today.getMonth() - birthDate.getMonth();
+        if (diffMonths < 0 || (diffMonths === 0 && today.getDate() < birthDate.getDate())) {
+            this.edad--;
+        }
+        this.mayoria = this.edad >= 18 ? true : false;
+    }
+};
 
-let coches = [
-    new Coche('citroën', 'c4', 4, 120, 5, '2022-11-09', 'elevalunas', 'cierre', 'climatizador'),
-    new Coche('seat', 'ibiza', 5, 110, 5, '2022-11-09', 'elevalunas', 'cierre'),
-    new Coche('audi', 'a4', 5, 180, 5, '2022-09-09', 'elevalunas', 'cierre'),
-    new Coche('renault', 'vel satis', 3, 200, 4, '2022-08-09', 'elevalunas', 'cierre'),
+Usuario.prototype.anyadirAficiones = function (...nuevasAficiones) {
+    nuevasAficiones.forEach(aficion => this.aficiones.add(aficion.toLowerCase()));
+};
 
+Usuario.prototype.borrarAficiones = function (...aficionesABorrar) {
+    aficionesABorrar.forEach(aficion => this.aficiones.delete(aficion.toLowerCase()));
+};
 
-]
-
-coches.forEach(coche => console.log(coche.mostrarCoche()));
-
-let fechasVenta = coches.reduce((acc, coche) => {
-    let fecha = coche.fecha.toISOString().split('T')[0];
-    acc[fecha] = (acc[fecha] || 0) + 1;
-    return acc;
+const fechasNacimiento = arrayUsuarios.reduce((fechas, usuario) => {
+    const fecha = new Date(usuario.fechaNacimiento).toISOString().slice(0, 10);
+    fechas[fecha] = (fechas[fecha] || 0) + 1;
+    return fechas;
 }, {});
 
-console.log(fechasVenta);
+console.log(fechasNacimiento);
 
-function filtrarCoche({mark, model, npuertas, potDesde, nplazas, acces}) {
-    return coches.filter(coche => 
-        (!mark || coche.marca === mark) &&
-        (!model || coche.modelo === model) &&
-        (!npuertas || coche.puertas === npuertas) &&
-        (!potDesde || coche.potencia >= potDesde) &&
-        (!nplazas || coche.plazas === nplazas) &&
-        (!acces || coche.accesorios.includes(acces))
-    );
+
+function filtrarUsuarios({ fechaDesde, fechaHasta, dni, edad, mayoria }) {
+    return arrayUsuarios.filter(usuario => {
+        const fechaNacimiento = new Date(usuario.fechaNacimiento);
+        const edadUsuario = new Date().getFullYear() - fechaNacimiento.getFullYear();
+        const esMayor = edadUsuario >= 18 ? true : false;
+
+        return (
+            (!fechaDesde || fechaNacimiento >= Date.parse(fechaDesde)) &&
+            (!fechaHasta || fechaNacimiento <= Date.parse(fechaHasta)) &&
+            (!dni || usuario.NIF === dni) &&
+            (!edad || usuario.edad === edad) &&
+            (!mayoria || usuario.mayoria === mayoria) &&
+            (!mayoria || esMayor === mayoria)
+        );
+    });
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Ejemplo de uso del filtro
+const usuariosFiltrados = filtrarUsuarios({ fechaDesde: '1970-01-01', edad: 30 });
+console.log(usuariosFiltrados);
 

@@ -10,7 +10,7 @@ function Ordenador(
   ...accesorios
 ) {
   this.marca = typeof marca === "string" ? marca : "no definida";
-  this.modelo = typeof modelo === "string" ? marca : "no definido";
+  this.modelo = typeof modelo === "string" ? modelo : "no definido";
   this.ram = !isNaN(ram) ? ram : 256;
   this.disco = disco;
   this.pulgadas = !isNaN(pulgadas) ? pulgadas : 15.6;
@@ -55,7 +55,7 @@ function Ordenador(
   };
   this.anyadirAccesorios = function (...nuevoAccesorios) {
     for (let i = 0; i < this.accesorios.length; i++) {
-      if (!this.accesorios.includes(NuevosAccesorios[i]))
+      if (!this.accesorios.includes(nuevoAccesorios[i]))
         this.accesorios.push(nuevoAccesorios[i]);
     }
   };
