@@ -3,7 +3,7 @@
 var idEmp = 0;
 var listEmp = [];
 
-function crearEmpleado(nombre, apellidos, nif, edad, puesto, salario, antigüedad)
+function Empleado(nombre, apellidos, nif, edad, puesto, salario, antigüedad)
 {
     this.nombre = nombre;
     this.apellidos = apellidos;
@@ -38,27 +38,19 @@ function muestraWeb()
     listaOrd.id = "listaOrd";
     listaOrd.classList.add('rounded-list');
     divEmp.append(listaOrd);
-
-    /*for(let emp of listEmp)
-    {
-        muestraEmpleado(emp);
-    }*/
     for (let i = 0; i < listEmp.length; i++) {
         listaOrd.append(muestraEmpleado(listEmp[i]));
-        // muestraEmpleado(listEmp[i]);
     }
 }
 
 function muestraEmpleado(empleado)
 {
 
-    // let listaOrd = document.getElementById("listaOrd");
     
     let li = "li" + empleado.id
     let newli = document.createElement('li');
     newli.id = li;
     
-    // listaOrd.append(newli);
     
     let idDivEmpleado = "divEmpleado" + empleado.id;
     let divEmp = document.createElement("div");
@@ -117,7 +109,7 @@ function EditarHandleFormulario() {
         let empleado = this.empleado;
         let boton = event.currentTarget;
         boton.disabled = true;
-        
+
         form.elements.nombre.value = empleado.nombre;
         form.elements.apellidos.value = empleado.apellidos;
         form.elements.nif.value = empleado.nif;
@@ -144,11 +136,7 @@ function EditarHandleFormulario() {
             boton.disabled = false;
             form.remove();
         });
-        
-        // Mover muestraWeb() fuera del evento submit
-        //boton.addEventListener('click', function() {
-                
-            //});
+    
         };
     }
 
@@ -197,8 +185,8 @@ function EditarHandleFormulario() {
         nuevoEmpleadoWebFormulario();
     })
     
-    let emple1 = new crearEmpleado("Juan", "Pérez", "12345678A", 30, "Programador", 2000, 5);
-    let emple2 = new crearEmpleado("Ana", "García", "87654321B", 25, "Programador", 2000, 2);
+    let emple1 = new Empleado("Juan", "Pérez", "12345678A", 30, "Programador", 2000, 5);
+    let emple2 = new Empleado("Ana", "García", "87654321B", 25, "Programador", 2000, 2);
     
     anyadirEmpleado(emple1);
     anyadirEmpleado(emple2);

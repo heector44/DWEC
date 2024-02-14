@@ -37,7 +37,7 @@ function muestraWeb(){
         lista.setAttribute("id", `li${cliente.id}`)
         
         let divLista = document.createElement("div");
-        divLista.classList.add("cliente");
+        divLista.classList.add("cliente"); 
         divLista.setAttribute("id", `${cliente.id}`);
 
         let nombreApellidos = document.createElement("p");
@@ -63,7 +63,6 @@ function muestraWeb(){
         nif.textContent = `Tipo: ${cliente.tipoCliente}`;
         divLista.append(tipoCliente);
 
-        
     }
 
 
